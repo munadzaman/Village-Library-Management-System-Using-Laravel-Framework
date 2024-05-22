@@ -31,7 +31,13 @@ Route::middleware('auth')->group(function() {
 });
 
 
+Route::get('/', function () {
+    // Retrieve necessary data for the dashboard
+    $totalMembers = App\Models\Member::count();
+    $totalBooks = App\Models\Book::count();
+    $books = App\Models\Book::take(8)->get(); 
 
-Route::get('/linkstorage', function () {
-    Artisan::call('storage:link');
-});
+    return view('dashboard', compact('totalMembers', 'totalBooks', 'books'));
+})->middleware('auth')->name('dashboard');
+
+
