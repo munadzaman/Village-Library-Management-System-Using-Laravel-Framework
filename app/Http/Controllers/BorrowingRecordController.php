@@ -35,28 +35,45 @@ class BorrowingRecordController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'member_id' => 'required|exists:members,id',
-            'book_id' => 'required|exists:books,id',
-        ]);
-    
-        $borrowingRecord = new BorrowingRecord;
-        $borrowingRecord->member_id = $request->member_id;
-        $borrowingRecord->book_id = $request->book_id;
-        $borrowingRecord->borrow_date = Carbon::now(); // Set borrow_date as Carbon instance
-        $borrowingRecord->save();
-    
-        $book = Book::find($request->book_id);
-        $book->available_copies -= 1;
-        $book->save();
-    
-        $member = Member::find($request->member_id);
-        $member->borrowed_status = true;
-        $member->save();
-    
-        return redirect()->route('borrowing_records.index')->with('success', 'Borrowing record added successfully.');
+{
+    $request->validate([
+        'member_id' => 'required|exists:members,id',
+        'book_id' => 'required|exists:books,id',
+    ]);
+
+    $member = Member::find($request->member_id);
+
+    // Check if the member already has an active borrowing record for the selected book
+    $existingRecord = BorrowingRecord::where('member_id', $request->member_id)
+                                     ->where('book_id', $request->book_id)
+                                     ->whereNull('return_date')
+                                     ->first();
+
+    if ($existingRecord) {
+        return redirect()->back()->with('error', 'Member cannot borrow the same book again without returning it first.');
     }
+
+    // Check if the member has borrowed more than 3 books
+    $currentlyBorrowedBooks = $member->borrowed_records()->whereNull('return_date')->count();
+    if ($currentlyBorrowedBooks >= 3) {
+        return redirect()->back()->with('error', 'Member cannot borrow more than 3 books at a time.');
+    }
+
+    $borrowingRecord = new BorrowingRecord;
+    $borrowingRecord->member_id = $request->member_id;
+    $borrowingRecord->book_id = $request->book_id;
+    $borrowingRecord->borrow_date = Carbon::now(); // Set borrow_date as Carbon instance
+    $borrowingRecord->save();
+
+    $book = Book::find($request->book_id);
+    $book->available_copies -= 1;
+    $book->save();
+
+    $member->borrowed_status = true;
+    $member->save();
+
+    return redirect()->route('borrowing_records.index')->with('success', 'Borrowing record added successfully.');
+}
 
     public function update(Request $request, BorrowingRecord $borrowingRecord)
     {

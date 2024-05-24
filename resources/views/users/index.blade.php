@@ -7,7 +7,7 @@
             <div class="card">
                 <div class="card-header">Users</div>
                 <div class="card-body">
-                    <a href="{{ route('users.create') }}" class="btn btn-primary mb-3">Add User</a>
+                    <a href="{{ route('users.create') }}" class="btn btn-primary mb-3">Add volunteer</a>
                     <table class="table table-bordered">
                         <thead>
                             <tr>
@@ -35,6 +35,8 @@
                             @endforeach
                         </tbody>
                     </table>
+                    {{ $users->links() }}
+
                 </div>
             </div>
         </div>

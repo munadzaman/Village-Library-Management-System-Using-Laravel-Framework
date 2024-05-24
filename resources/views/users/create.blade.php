@@ -5,7 +5,7 @@
     <div class="row">
         <div class="col-md-8 offset-md-2">
             <div class="card">
-                <div class="card-header">Add User</div>
+                <div class="card-header">Add Volunteer</div>
                 <div class="card-body">
                     <form action="{{ route('users.store') }}" method="POST">
                         @csrf
@@ -29,7 +29,6 @@
                             <label for="role">Role</label>
                             <select name="role" class="form-control" id="role" required>
                                 <option value="volunteer">Volunteer</option>
-                                <option value="supervisor">Supervisor</option>
                             </select>
                         </div>
                         <button type="submit" class="btn btn-primary">Add User</button>

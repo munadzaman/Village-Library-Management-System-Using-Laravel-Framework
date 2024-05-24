@@ -1,4 +1,6 @@
 <?php
+use App\Models\Member;
+use App\Models\Book;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
@@ -33,11 +35,17 @@ Route::middleware('auth')->group(function() {
 
 Route::get('/', function () {
     // Retrieve necessary data for the dashboard
-    $totalMembers = App\Models\Member::count();
-    $totalBooks = App\Models\Book::count();
-    $books = App\Models\Book::take(8)->get(); 
+    $totalMembers = Member::count();
+    $totalBooks = Book::count();
+    $latestBorrowedBooks = Book::whereHas('borrowingRecords', function($query) {
+        $query->whereNull('return_date');
+    })->orderBy('created_at', 'desc')->take(10)->get();
+    $mostBorrowedBooks = Book::withCount(['borrowingRecords' => function($query) {
+        $query->whereNull('return_date');
+    }])->orderBy('borrowing_records_count', 'desc')->get();
+    $booksWithLowCopies = Book::where('available_copies', '<', 5)->get();
 
-    return view('dashboard', compact('totalMembers', 'totalBooks', 'books'));
+    return view('dashboard', compact('totalMembers', 'totalBooks', 'latestBorrowedBooks', 'mostBorrowedBooks', 'booksWithLowCopies'));
 })->middleware('auth')->name('dashboard');
 
 

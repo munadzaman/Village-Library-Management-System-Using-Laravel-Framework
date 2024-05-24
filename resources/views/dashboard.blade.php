@@ -1,7 +1,5 @@
 @extends('layouts.app')
 
-@section('title', 'Dashboard')
-
 @section('content')
     <!-- Content Row -->
     <div class="row">
@@ -21,7 +19,6 @@
                 </div>
             </div>
         </div>
-
         <!-- Total Books Card -->
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-success shadow h-100 py-2">
@@ -39,21 +36,70 @@
             </div>
         </div>
     </div>
-
-    <!-- Books List -->
+     
+    <!-- Latest Borrowed Books -->
     <div class="row">
-        @foreach ($books as $book)
-            <div class="col-lg-2 col-md-2 mb-6">
-                <div class="card">
-                    <img src="{{ asset('storage/' . $book->cover) }}" class="card-img-top" alt="Book Cover">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ $book->title }}</h5>
-                        <p class="card-text">Author: {{ $book->author }}</p>
-                        <p class="card-text">Available Copies: {{ $book->available_copies }}</p>
-                        <p class="card-text">Total Copies: {{ $book->total_copies }}</p>
+        <div class="col-md-12">
+            <h3>Latest Borrowed Books</h3>
+            <div class="row">
+                @foreach ($latestBorrowedBooks as $book)
+                    <div class="col-lg-2 col-md-2 mb-4">
+                        <div class="card">
+                            <img src="{{ asset('storage/' . $book->cover) }}" class="card-img-top" alt="Book Cover">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ $book->title }}</h5>
+                                <p class="card-text">Author: {{ $book->author }}</p>
+                                <p class="card-text">Borrowed Copies: {{ $book->total_copies - $book->available_copies }}</p>
+                                <p class="card-text">Total Copies: {{ $book->total_copies }}</p>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                @endforeach
             </div>
-        @endforeach
+        </div>
+    </div>
+
+    <!-- Most Borrowed Books -->
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Most Borrowed Books</h3>
+            <div class="row">
+                @foreach ($mostBorrowedBooks as $book)
+                    <div class="col-lg-2 col-md-2 mb-4">
+                        <div class="card">
+                            <img src="{{ asset('storage/' . $book->cover) }}" class="card-img-top" alt="Book Cover">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ $book->title }}</h5>
+                                <p class="card-text">Author: {{ $book->author }}</p>
+                                <p class="card-text">Borrowed Times: {{ $book->borrowing_records_count }}</p>
+                                <p class="card-text">Total Copies: {{ $book->total_copies }}</p>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </div>
+
+    <!-- Books with Low Copies -->
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Books with Low Copies</h3>
+            <div class="row">
+                @foreach ($booksWithLowCopies as $book)
+                    <div class="col-lg-2 col-md-2 mb-4">
+                        <div class="card">
+                            <img src="{{ asset('storage/' . $book->cover) }}" class="card-img-top" alt="Book Cover">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ $book->title }}</h5>
+                                <p class="card-text">Author: {{ $book->author }}</p>
+                                <p class="card-text">Available Copies: {{ $book->available_copies }}</p>
+                                <p class="card-text">Total Copies: {{ $book->total_copies }}</p>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
     </div>
 @endsection

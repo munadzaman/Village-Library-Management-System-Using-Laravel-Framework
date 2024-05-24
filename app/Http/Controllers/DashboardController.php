@@ -1,27 +1,32 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Book;
-use App\Models\BorrowingRecord;
+use App\Models\Member;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        // Retrieve total number of books
-        $totalBooks = Book::count();
+        // Retrieve total number of members
+        $totalMembers = Member::count();
 
-        // Retrieve total number of copies of all books
-        $totalCopies = Book::sum('total_copies');
+        // Retrieve latest 10 books that are currently being borrowed
+        $latestBorrowedBooks = Book::whereHas('borrowingRecords', function($query) {
+            $query->whereNull('return_date');
+        })->orderBy('created_at', 'desc')->take(10)->get();
 
-        // Retrieve total number of borrowed records
-        $totalBorrowedRecords = BorrowingRecord::count();
+        // Retrieve 10 most borrowed books
+        $mostBorrowedBooks = Book::withCount('borrowingRecords')
+            ->orderByDesc('borrowing_records_count')
+            ->take(10)
+            ->get();
 
-        // Retrieve total number of borrowed records that are not returned yet
-        $totalBorrowedRecordsNotReturned = BorrowingRecord::whereNull('return_date')->count();
+        // Retrieve books with available copies less than 5
+        $booksWithLowCopies = Book::where('available_copies', '<', 5)->take(10)->get();
 
-        return view('dashboard', compact('totalBooks', 'totalCopies', 'totalBorrowedRecords', 'totalBorrowedRecordsNotReturned'));
+        return view('dashboard', compact('totalMembers', 'latestBorrowedBooks', 'mostBorrowedBooks', 'booksWithLowCopies'));
     }
 }
+

@@ -16,12 +16,23 @@ class SupervisorSeeder extends Seeder
     public function run()
     {
         DB::table('users')->insert([
-            'name' => 'Admin Supervisor',
-            'email' => 'admin@library.com',
+            'name' => 'Supervisor1', 
+            'email' => 'admin@librar.com',
             'password' => Hash::make('password'),
             'role' => 'supervisor',
             'created_at' => now(),
             'updated_at' => now(),
+        ]);
+
+            DB::table('users')->insert([
+                'name' => 'Supervisor1', 
+                'email' => 'admin@admin.com',
+                'password' => Hash::make('password'),
+                'role' => 'supervisor',
+                'created_at' => now(),
+                'updated_at' => now(),
+
+
         ]);
     }
 }

@@ -56,6 +56,8 @@
                             @endforeach
                         </tbody>
                     </table>
+                    <!-- Pagination Links -->
+                    {{ $members->links() }}
                 </div>
             </div>
         </div>

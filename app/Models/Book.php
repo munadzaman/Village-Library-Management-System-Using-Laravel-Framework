@@ -13,4 +13,10 @@ class Book extends Model
         'title', 'author', 'category', 'book_id', 'total_copies', 'available_copies',
         'publisher_name', 'published_year', 'cover',
     ];
+
+    // Define the relationship with BorrowingRecord model
+    public function borrowingRecords()
+    {
+        return $this->hasMany(BorrowingRecord::class);
+    }
 }
